@@ -48,3 +48,6 @@ def pa():
     
 if __name__ == "__main__":
     knn()
+    perceptron()
+    svm()
+    pa()
