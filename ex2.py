@@ -18,19 +18,65 @@ def dist(a, b):
     return np.linalg.norm(a - b)
 
 # output of functions is array of predictions
-def knn():
+def knn(k):
     # python ex2.py <train_x_path> <train_y_path> <test_x_path> <output_log_name>
     train_x_path, train_y_path, test_x_path, output_log_name = sys.argv[1], sys.argv[2],sys.argv[3],sys.argv[4]
     # open file
     with open(train_x_path) as file:
-        txtPoints = file.readlines()
-        txtPoints = [line.rstrip().split(",") for line in txtPoints]
+        trainPoints = file.readlines()
+        trainPoints = [line.rstrip().split(",") for line in trainPoints]
+        trainPoints = convertListToFloat(trainPoints)
     file.close()
-    # convert to float
-    points = convertListToFloat(txtPoints)
+    # open results file
+    with open(train_y_path) as file:
+        resultsVector = file.readlines()
+        resultsVector = [line.rstrip() for line in resultsVector]
+        for i in range(len(resultsVector)):
+            resultsVector[i] = int(resultsVector[i])
+    file.close()
+    # open test file
+    with open(test_x_path) as file:
+        testPoints = file.readlines()
+        testPoints = [line.rstrip().split(",") for line in testPoints]
+        testPoints = convertListToFloat(testPoints)
+    file.close()
+    #
+    # compute distance for each point
+    distancesForTestPoints = []
+    for testPoint in testPoints:
+        distVector = []
+        distVector.clear()
+        for x in range(len(trainPoints)):
+            distVector.append((x, dist(trainPoints[x], testPoint)))
+        distancesForTestPoints.append(distVector)
+    #
+    # sort distances
+    predictionsVector = []
+    for testPoint in distancesForTestPoints:
+        testPoint.sort(key=lambda tup: tup[1])
+        classifications = []
+        classifications.clear()
+        for i in range(k):
+            p = testPoint[i]
+            classifications.append(resultsVector[p[0]])
+        # find the most common classification
+        prediction = max(set(classifications), key=classifications.count)
+        predictionsVector.append(prediction)
+    correct = 0
+    fail = 0
+    for i in range(len(predictionsVector)):
+        if predictionsVector[i] == resultsVector[i]:
+            correct += 1
+        else:
+            fail += 1
+
+    successRate = (correct / (fail + correct)) * 100
+    print(successRate)
 
 
-    print("Check")
+
+
+
 
 
 
@@ -47,7 +93,7 @@ def pa():
     pass
     
 if __name__ == "__main__":
-    knn()
+    knn(5)
     perceptron()
     svm()
     pa()
