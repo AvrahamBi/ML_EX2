@@ -71,7 +71,7 @@ def knn(k):
             fail += 1
 
     successRate = (correct / (fail + correct)) * 100
-    print(successRate)
+    print("KNN Rate:", round(successRate, 4))
 
 
 
