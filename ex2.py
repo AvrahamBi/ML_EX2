@@ -15,7 +15,8 @@ def convertListToFloat(txtPoints):
 def dist(a, b):
     a = np.array(a)
     b = np.array(b)
-    return np.linalg.norm(a - b)
+    d = np.linalg.norm(a - b)
+    return d
 
 # output of functions is array of predictions
 def knn(k):
@@ -40,10 +41,11 @@ def knn(k):
         testPoints = [line.rstrip().split(",") for line in testPoints]
         testPoints = convertListToFloat(testPoints)
     file.close()
-    #
+
     # compute distance for each point
     distancesForTestPoints = []
     for testPoint in testPoints:
+        check = 0
         distVector = []
         distVector.clear()
         for x in range(len(trainPoints)):
@@ -62,6 +64,8 @@ def knn(k):
         # find the most common classification
         prediction = max(set(classifications), key=classifications.count)
         predictionsVector.append(prediction)
+
+    ######## Conclusion
     correct = 0
     fail = 0
     for i in range(len(predictionsVector)):
@@ -69,17 +73,9 @@ def knn(k):
             correct += 1
         else:
             fail += 1
-
     successRate = (correct / (fail + correct)) * 100
-    print("KNN Rate:", round(successRate, 4))
-
-
-
-
-
-
-
-
+    print("KNN(" + str(k) +") Rate:", round(successRate, 4))
+    return (k, successRate)
 
 
 
@@ -93,7 +89,13 @@ def pa():
     pass
     
 if __name__ == "__main__":
-    knn(5)
+    x = knn(4)
+    for i in range(1, 21, 1):
+        y = knn(i)
+        if (y[1] > x[1]):
+            x = y
+    print("")
+    print("BEST: " + "KNN(" + str(x[0]) + ") Rate:", str(round(x[1], 4)))
     perceptron()
     svm()
     pa()
