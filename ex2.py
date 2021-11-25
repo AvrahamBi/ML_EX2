@@ -23,12 +23,6 @@ def knn(k):
     trainPoints = np.loadtxt(sys.argv[1], delimiter=",")
     resultsVector = np.loadtxt(sys.argv[2])
     testPoints = np.loadtxt(sys.argv[3], delimiter=",")
-
-    # shufller = np.random.permutation(len(trainPoints))
-    # testPoints = testPoints[shufller]
-    # resultsVector = resultsVector[shufller]
-    # trainPoints = trainPoints[shufller]
-
     # compute distance for each point
     distancesForTestPoints = []
     # iterate over test rows (test points)
@@ -78,15 +72,14 @@ def pa():
 
 
 if __name__ == "__main__":
-    knnPredictions = knn(3)
-
+    knnPrediction = knn(3)
     # for i in range(3, 9, 1):
     #     y = knn(i)
     #     if (y[1] > x[1]):
     #         x = y
     # print("")
     # print("BEST: " + "KNN(" + str(x[0]) + ") Rate:", str(round(x[1], 4)))
-    perceptron()
-    svm()
-    pa()
+    perceptronPrediction = perceptron()
+    svmPrediction = svm()
+    paPrediction = pa()
     # output_file = open(sys.argv[4], "w")
