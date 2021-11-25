@@ -23,11 +23,12 @@ def knn(k):
     trainPoints = np.loadtxt(sys.argv[1], delimiter=",")
     resultsVector = np.loadtxt(sys.argv[2])
     testPoints = np.loadtxt(sys.argv[3], delimiter=",")
-    #
+
     # shufller = np.random.permutation(len(trainPoints))
+    # testPoints = testPoints[shufller]
+    # resultsVector = resultsVector[shufller]
     # trainPoints = trainPoints[shufller]
-    # tresultsVector = resultsVector[shufller]
-    #
+
     # compute distance for each point
     distancesForTestPoints = []
     # iterate over test rows (test points)
@@ -51,18 +52,17 @@ def knn(k):
         # find the most common classification
         prediction = max(set(classifications), key=classifications.count)
         predictionsVector.append(prediction)
-
-    # Conclusion
-    correct = 0
-    fail = 0
-    for i in range(len(predictionsVector)):
-        if predictionsVector[i] == resultsVector[i]:
-            correct += 1
-        else:
-            fail += 1
-    successRate = (correct / (fail + correct)) * 100
-    print("KNN(" + str(k) +") Rate:", round(successRate, 4))
-    return (k, successRate)
+    return predictionsVector
+    # correct = 0
+    # fail = 0
+    # for i in range(len(predictionsVector)):
+    #     if predictionsVector[i] == resultsVector[i]:
+    #         correct += 1
+    #     else:
+    #         fail += 1
+    # successRate = (correct / (fail + correct)) * 100
+    # print("KNN(" + str(k) +") Rate:", round(successRate, 4))
+    # return (k, successRate)
 
 
 def perceptron():
@@ -78,13 +78,14 @@ def pa():
 
 
 if __name__ == "__main__":
-    x = knn(2)
-    for i in range(3, 20, 1):
-        y = knn(i)
-        if (y[1] > x[1]):
-            x = y
-    print("")
-    print("BEST: " + "KNN(" + str(x[0]) + ") Rate:", str(round(x[1], 4)))
+    knnPredictions = knn(3)
+
+    # for i in range(3, 9, 1):
+    #     y = knn(i)
+    #     if (y[1] > x[1]):
+    #         x = y
+    # print("")
+    # print("BEST: " + "KNN(" + str(x[0]) + ") Rate:", str(round(x[1], 4)))
     perceptron()
     svm()
     pa()
