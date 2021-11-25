@@ -23,35 +23,34 @@ def knn(k):
     trainPoints = np.loadtxt(sys.argv[1], delimiter=",")
     resultsVector = np.loadtxt(sys.argv[2])
     testPoints = np.loadtxt(sys.argv[3], delimiter=",")
-    #output_file = open(sys.argv[4], "w")
-    #trainPoints = minmax_normalization(trainPoints)
-    #testPoints = minmax_normalization(testPoints)
-    #trainPoints = zscore_normalization(trainPoints)
-    #testPoints = zscore_normalization(testPoints)
-
+    #
+    # shufller = np.random.permutation(len(trainPoints))
+    # trainPoints = trainPoints[shufller]
+    # tresultsVector = resultsVector[shufller]
+    #
     # compute distance for each point
     distancesForTestPoints = []
-    for testPoint in testPoints:
+    # iterate over test rows (test points)
+    for i in range(len(testPoints)):
         distVector = []
         distVector.clear()
-        for x in range(len(trainPoints)):
-            distVector.append((x, dist(testPoint, trainPoints[x])))
+        for j in range(len(trainPoints)):
+            d = dist(testPoints[i], trainPoints[j])
+            distVector.append((j, d))
         distancesForTestPoints.append(distVector)
     # sort distances
     predictionsVector = []
-    for t in distancesForTestPoints:
+    for i in range(len(distancesForTestPoints)):
         classifications = []
         classifications.clear()
-        t.sort(key=lambda tup: tup[1])
-        for i in range(k):
-            p = t[i][0]
-            xx = resultsVector[p]
-            classifications.append(xx)
+        distancesForTestPoints[i].sort(key=lambda tup: tup[1])
+        for j in range(k):
+            nearestPoint = distancesForTestPoints[i][j][0]
+            num = resultsVector[nearestPoint]
+            classifications.append(num)
         # find the most common classification
         prediction = max(set(classifications), key=classifications.count)
         predictionsVector.append(prediction)
-
-
 
     # Conclusion
     correct = 0
@@ -79,13 +78,14 @@ def pa():
 
 
 if __name__ == "__main__":
-    x = knn(9)
-    # for i in range(2, 51, 1):
-    #     y = knn(i)
-    #     if (y[1] > x[1]):
-    #         x = y
+    x = knn(2)
+    for i in range(3, 20, 1):
+        y = knn(i)
+        if (y[1] > x[1]):
+            x = y
     print("")
-    #print("BEST: " + "KNN(" + str(x[0]) + ") Rate:", str(round(x[1], 4)))
+    print("BEST: " + "KNN(" + str(x[0]) + ") Rate:", str(round(x[1], 4)))
     perceptron()
     svm()
     pa()
+    # output_file = open(sys.argv[4], "w")
