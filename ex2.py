@@ -53,17 +53,12 @@ class Perceptron:
         self.Y = Y
         self.lr = lr
         self.n_samples, self.n_features = X.shape
-        # self.n_samples IS X.shape[0]
-        self.w = np.random.random((3, X.shape[1]))
+        self.w = np.random.random((3, X.shape[1])) # todo zeros or random.random
 
     def train(self, numOfEpocs):
-        #b = np.full(self.n_samples, 1).reshape(self.n_samples, 1)
-        #self.X = np.append(self.X, b, axis=1)
-        #self.w = np.zeros(self.n_features)
         for x in range(numOfEpocs):
             for x_i, y_i in zip(self.X, self.Y):
                 y_hat = np.argmax(np.dot(self.w, x_i))
-                # mistake
                 y_i = int(y_i)
                 y_hat = int(y_hat)
                 if y_i != y_hat:
@@ -102,7 +97,6 @@ def Pa():
     pass
 
 if __name__ == "__main__":
-
     trainPoints = np.loadtxt(sys.argv[1], delimiter=",")
     resultsVector = np.loadtxt(sys.argv[2])
     testPoints = np.loadtxt(sys.argv[3], delimiter=",")
@@ -111,7 +105,7 @@ if __name__ == "__main__":
     testPoints = zscore_normalization(testPoints)
 
     p = Perceptron(trainPoints, resultsVector, 0.1)
-    p.train(30)
+    p.train(100)
     perceptronPrediction = p.run(trainPoints)
     compare(perceptronPrediction)
 
