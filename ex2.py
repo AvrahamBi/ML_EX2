@@ -1,10 +1,8 @@
 import sys
 import numpy as np
-from scipy import stats
 
 def zscore_normalization(data_set):
-    #return (data_set - data_set.mean(0)) / data_set.std(0)
-    return stats.zscore(data_set) # todo remove this Scipy
+    return (data_set - data_set.mean(0)) / data_set.std(0)
 
 def minmax_normalization(data_set):
     min_vector = np.min(data_set, axis=0)
@@ -47,39 +45,78 @@ def knn(k):
         prediction = max(set(classifications), key=classifications.count)
         predictionsVector.append(prediction)
     return predictionsVector
-    # correct = 0
-    # fail = 0
-    # for i in range(len(predictionsVector)):
-    #     if predictionsVector[i] == resultsVector[i]:
-    #         correct += 1
-    #     else:
-    #         fail += 1
-    # successRate = (correct / (fail + correct)) * 100
-    # print("KNN(" + str(k) +") Rate:", round(successRate, 4))
-    # return (k, successRate)
 
 
-def perceptron():
+class Perceptron:
+    def __init__(self, X, Y, lr):
+        self.X = X
+        self.Y = Y
+        self.lr = lr
+        self.n_samples, self.n_features = X.shape
+        # self.n_samples IS X.shape[0]
+        self.w = np.random.random((3, X.shape[1]))
+
+    def train(self, numOfEpocs):
+        #b = np.full(self.n_samples, 1).reshape(self.n_samples, 1)
+        #self.X = np.append(self.X, b, axis=1)
+        #self.w = np.zeros(self.n_features)
+        for x in range(numOfEpocs):
+            for x_i, y_i in zip(self.X, self.Y):
+                y_hat = np.argmax(np.dot(self.w, x_i))
+                # mistake
+                y_i = int(y_i)
+                y_hat = int(y_hat)
+                if y_i != y_hat:
+                    update = self.lr * x_i
+                    self.w[y_i, :] = self.w[y_i, :] + update
+                    self.w[y_hat, :] = self.w[y_hat, :] - update
+            if x % 10 == 1:
+                self.lr *= 0.1
+
+
+    def run(self, test):
+        predictions = []
+        for sample in test:
+            y_hat = np.argmax(np.dot(self.w, sample))
+            predictions.append(int(y_hat))
+        return predictions
+
+
+def compare(predictions):
+    resultsVector = np.loadtxt(sys.argv[2])
+    correct = 0
+    fail = 0
+    for i in range(len(predictions)):
+        if predictions[i] == resultsVector[i]:
+            correct += 1
+        else:
+            fail += 1
+    successRate = (correct / (fail + correct)) * 100
+    print(successRate, "%")
+
+
+def Svm():
     pass
 
-def svm():
+def Pa():
     pass
-
-def pa():
-    pass
-
-
-
 
 if __name__ == "__main__":
-    knnPrediction = knn(3)
-    # for i in range(3, 9, 1):
-    #     y = knn(i)
-    #     if (y[1] > x[1]):
-    #         x = y
-    # print("")
-    # print("BEST: " + "KNN(" + str(x[0]) + ") Rate:", str(round(x[1], 4)))
-    perceptronPrediction = perceptron()
-    svmPrediction = svm()
-    paPrediction = pa()
+
+    trainPoints = np.loadtxt(sys.argv[1], delimiter=",")
+    resultsVector = np.loadtxt(sys.argv[2])
+    testPoints = np.loadtxt(sys.argv[3], delimiter=",")
+
+    trainPoints = zscore_normalization(trainPoints)
+    testPoints = zscore_normalization(testPoints)
+
+    p = Perceptron(trainPoints, resultsVector, 0.1)
+    p.train(30)
+    perceptronPrediction = p.run(trainPoints)
+    compare(perceptronPrediction)
+
+    #knnPrediction = knn(3)
+    #perceptronPrediction = perceptron()
+    #svmPrediction = svm()
+    #paPrediction = pa()
     # output_file = open(sys.argv[4], "w")
