@@ -2,18 +2,6 @@ import sys
 import numpy as np
 
 
-def compare(predictions):
-    resultsVector = np.loadtxt(sys.argv[2])
-    correct = 0
-    fail = 0
-    for i in range(len(predictions)):
-        if predictions[i] == resultsVector[i]:
-            correct += 1
-        else:
-            fail += 1
-    successRate = (correct / (fail + correct)) * 100
-    print(successRate, "%")
-
 def zScoreNorma(data_set):
     return (data_set - data_set.mean(0)) / data_set.std(0)
 
@@ -135,11 +123,20 @@ def pa():
         predictions.append(int(y_hat))
     return predictions
 
+# to get success rate
+# def compare(predictions):
+#     resultsVector = np.loadtxt(sys.argv[2])
+#     correct = 0
+#     fail = 0
+#     for i in range(len(predictions)):
+#         if predictions[i] == resultsVector[i]:
+#             correct += 1
+#         else:
+#             fail += 1
+#     successRate = (correct / (fail + correct)) * 100
+#     print(successRate, "%")
+
 if __name__ == "__main__":
-    # compare(knn())
-    # compare(perceptron())
-    # compare(svm())
-    # compare(pa())
 
     knnVector = knn()
     perceptronVector = perceptron()
