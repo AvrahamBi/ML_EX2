@@ -112,7 +112,7 @@ def svm(X, Y, lr, numOfEpocs, test, delta):
         predictions.append(int(y_hat))
     return predictions
 
-def pa(X, Y, lr, numOfEpocs, test, delta):
+def pa(X, Y, numOfEpocs, test):
     n_samples, n_features = X.shape
     w = np.zeros((3, X.shape[1]))
     for x in range(numOfEpocs):
@@ -121,18 +121,12 @@ def pa(X, Y, lr, numOfEpocs, test, delta):
             y_i = int(y_i)
             y_hat = int(y_hat)
             loss = 1 - np.dot(x_i, w[y_i]) + np.dot(x_i, w[y_hat])
-            if 0 < loss:
-                deltaLr = 1 - (delta * lr)
-                lrUpdate = lr * x_i
-                w[y_i] = deltaLr * w[y_i] + lrUpdate
-                w[y_hat] = deltaLr * w[y_hat] - lrUpdate
-                for i in range(len(w)):
-                    if i != y_i and i != y_hat:
-                        w[i] = w[i] * deltaLr
-            else:
-                w = w * (1 - delta * lr)
-        if x % 10 == 1:
-            lr *= 0.1
+            dist = np.linalg.norm(x_i) * np.linalg.norm(x_i)
+            tau = loss if loss > 0 else 0
+            tau /= 2 * dist
+            if y_i != y_hat:
+                w[y_i] = w[y_i] + tau * x_i
+                w[y_hat] = w[y_hat] - tau * x_i
     predictions = []
     for sample in test:
         y_hat = np.argmax(np.dot(w, sample))
@@ -147,7 +141,7 @@ if __name__ == "__main__":
     trainPoints = zscore_normalization(trainPoints)
     testPoints = zscore_normalization(testPoints)
 
-    compare(perceptron(trainPoints, resultsVector, 0.3, 30, trainPoints))
+    compare(pa(trainPoints, resultsVector, 40, trainPoints))
 
     #knnVector = knn(3)
     #perceptronVector = perceptron(trainPoints, resultsVector, 0.3, 30, trainPoints)
