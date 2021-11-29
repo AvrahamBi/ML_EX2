@@ -14,23 +14,16 @@ def compare(predictions):
     successRate = (correct / (fail + correct)) * 100
     print(successRate, "%")
 
-def zscore_normalization(data_set):
+def zScoreNorma(data_set):
     return (data_set - data_set.mean(0)) / data_set.std(0)
-
-def minmax_normalization(data_set):
-    min_vector = np.min(data_set, axis=0)
-    max_vector = np.max(data_set, axis=0)
-    for row in data_set:
-        for i in range(len(row)):
-            row[i] = (row[i] - min_vector[i]) / (max_vector[i] - min_vector[i])
-    return data_set
 
 def dist(a, b):
     d = np.linalg.norm(a - b)
     return d
 
 # output of functions is array of predictions
-def knn(k):
+def knn():
+    k = 30
     trainPoints = np.loadtxt(sys.argv[1], delimiter=",")
     resultsVector = np.loadtxt(sys.argv[2])
     testPoints = np.loadtxt(sys.argv[3], delimiter=",")
@@ -59,15 +52,15 @@ def knn(k):
         predictionsVector.append(prediction)
     return predictionsVector
 
-
-def perceptron(X, Y, lr, numOfEpocs, test):
+def perceptron():
+    lr = 0.3
+    numOfEpocs = 30
+    X = zScoreNorma(np.loadtxt(sys.argv[1], delimiter=","))
+    Y = resultsVector = np.loadtxt(sys.argv[2])
+    test = zScoreNorma(np.loadtxt(sys.argv[3], delimiter=","))
     n_samples, n_features = X.shape
     w = np.zeros((3, X.shape[1]))
-    #w = np.random.random((3, X.shape[1]))
     for x in range(numOfEpocs):
-        #shufller = np.random.permutation(len(trainPoints))
-        #Y = Y[shufller]
-        #X = X[shufller]
         for x_i, y_i in zip(X, Y):
             y_hat = np.argmax(np.dot(w, x_i))
             y_i = int(y_i)
@@ -84,8 +77,13 @@ def perceptron(X, Y, lr, numOfEpocs, test):
         predictions.append(int(y_hat))
     return predictions
 
-
-def svm(X, Y, lr, numOfEpocs, test, delta):
+def svm():
+    lr = 0.3
+    numOfEpocs = 30
+    delta = 0.01
+    X = zScoreNorma(np.loadtxt(sys.argv[1], delimiter=","))
+    Y = resultsVector = np.loadtxt(sys.argv[2])
+    test = zScoreNorma(np.loadtxt(sys.argv[3], delimiter=","))
     n_samples, n_features = X.shape
     w = np.zeros((3, X.shape[1]))
     for x in range(numOfEpocs):
@@ -112,7 +110,11 @@ def svm(X, Y, lr, numOfEpocs, test, delta):
         predictions.append(int(y_hat))
     return predictions
 
-def pa(X, Y, numOfEpocs, test):
+def pa():
+    numOfEpocs = 40
+    X = zScoreNorma(np.loadtxt(sys.argv[1], delimiter=","))
+    Y = resultsVector = np.loadtxt(sys.argv[2])
+    test = zScoreNorma(np.loadtxt(sys.argv[3], delimiter=","))
     n_samples, n_features = X.shape
     w = np.zeros((3, X.shape[1]))
     for x in range(numOfEpocs):
@@ -134,17 +136,17 @@ def pa(X, Y, numOfEpocs, test):
     return predictions
 
 if __name__ == "__main__":
-    trainPoints = np.loadtxt(sys.argv[1], delimiter=",")
-    resultsVector = np.loadtxt(sys.argv[2])
-    testPoints = np.loadtxt(sys.argv[3], delimiter=",")
+    # compare(knn())
+    # compare(perceptron())
+    # compare(svm())
+    # compare(pa())
 
-    trainPoints = zscore_normalization(trainPoints)
-    testPoints = zscore_normalization(testPoints)
-
-    compare(pa(trainPoints, resultsVector, 40, trainPoints))
-
-    #knnVector = knn(3)
-    #perceptronVector = perceptron(trainPoints, resultsVector, 0.3, 30, trainPoints)
-    #svmVector = perceptron(trainPoints, resultsVector, 0.3, 30, trainPoints, 0.01)
-    #paVector = pa(trainPoints, resultsVector, 40, trainPoints)
-    # output_file = open(sys.argv[4], "w")
+    knnVector = knn()
+    perceptronVector = perceptron()
+    svmVector = svm()
+    paVector = pa()
+    output_file = open(sys.argv[4], "w")
+    for knn, perceptron, svm, pa in zip(knnVector, perceptronVector, svmVector, paVector):
+        line = "knn: " + str(int(knn)) + ", perceptron: " + str(int(perceptron)) + ", svm: " + str(int(svm)) + ", pa: " + str(int(pa)) + "\n"
+        output_file.write(line)
+    output_file.close()
