@@ -146,5 +146,5 @@ if __name__ == "__main__":
     #knnVector = knn(3)
     #perceptronVector = perceptron(trainPoints, resultsVector, 0.3, 30, trainPoints)
     #svmVector = perceptron(trainPoints, resultsVector, 0.3, 30, trainPoints, 0.01)
-
+    #paVector = pa(trainPoints, resultsVector, 40, trainPoints)
     # output_file = open(sys.argv[4], "w")
